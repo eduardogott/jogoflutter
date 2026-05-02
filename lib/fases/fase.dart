@@ -16,6 +16,23 @@ import 'package:flutter/material.dart';
 import '../utils/game_scaffold.dart';
 import 'pos_fase.dart';
 
+Color _getScoreColor(int found, int total) {
+  if (total == 0) return const Color(0xfffb7c6c); // fallback
+
+  final ratio = found / total;
+
+  if (found == 0) {
+    return const Color(0xFFFF0000); // red
+  } else if (ratio <= 0.33) {
+    return const Color(0xFFFFA500); // orange
+  } else if (ratio <= 0.66) {
+    return const Color(0xFFFFFF00); // yellow
+  } else if (ratio < 1.0) {
+    return const Color(0xFF00FF00); // green
+  } else {
+    return const Color(0xFF0000FF); // blue
+  }
+}
 // ─────────────────────────────────────────────────────────────────────────────
 // Modelo de um item clicável
 // ─────────────────────────────────────────────────────────────────────────────
@@ -160,9 +177,9 @@ class _FaseState extends State<Fase> {
       overlays: [
         // ── Placar no topo (espaço portrait: 1080×1920) ────────────────────
         GameOverlay(
-          refX: 120,
+          refX: 170,
           refY: 150,
-          refWidth: 840,
+          refWidth: 740,
           refHeight: 320,
           child: Container(
             padding: const EdgeInsets.symmetric(horizontal: 12),
@@ -171,25 +188,25 @@ class _FaseState extends State<Fase> {
               borderRadius: BorderRadius.circular(20),
               border: Border.all(
                 color: Color(0xfff5ac46), // border color
-                width: 4,            // thickness
+                width: 6,            // thickness
               ),
             ),
           ),
         ),
 
         GameOverlay(
-          refX: 120,
+          refX: 170,
           refY: 150,
-          refWidth: 240,
-          refHeight: 120,
+          refWidth: 220,
+          refHeight: 140,
           child: Container(
             padding: const EdgeInsets.symmetric(horizontal: 12),
             decoration: BoxDecoration(
-              color: Color(0xfff8e1bb),
+              color: Color(0xff4e80ff),
               borderRadius: BorderRadius.circular(20),
               border: Border.all(
                 color: Color(0xfff5ac46), // border color
-                width: 4,            // thickness
+                width: 6,            // thickness
               ),
             ),
             child: Row(
@@ -197,13 +214,91 @@ class _FaseState extends State<Fase> {
               children: [
                 Text(
                   'Fase ${widget.level}',
-                  style: const TextStyle(color: Colors.white, fontSize: 18, fontFamily: 'ComicSans', fontWeight: FontWeight.bold),
+                  style: const TextStyle(color: Colors.white, fontSize: 30, fontFamily: 'ComicSans', fontWeight: FontWeight.bold),
                 ),
               ],
             ),
           ),
         ),
 
+        GameOverlay(
+          refX: 420,
+          refY: 180,
+          refWidth: 460,
+          refHeight: 120,
+          child: Container(
+            padding: const EdgeInsets.symmetric(horizontal: 12),
+            decoration: BoxDecoration(
+              color: Color(0xfff8e1bb),
+              borderRadius: BorderRadius.circular(20),
+              boxShadow: [
+                BoxShadow(
+                  color: Color(0xfff5ac46).withOpacity(0.7),
+                  blurRadius: 8,
+                  spreadRadius: 1,
+                  offset: Offset(0, 4), // pushes shadow downward
+                ),
+              ],
+            ),
+            child: Row(
+              mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+              children: [
+                Text(
+                  'Encontre os focos!',
+                  style: const TextStyle(color: Color(0xff045d95), fontSize: 32, fontFamily: 'ComicSans', fontWeight: FontWeight.bold),
+                ),
+              ],
+            ),
+          ),
+        ),
+
+        GameOverlay(
+          refX: 420,
+          refY: 330,
+          refWidth: 460,
+          refHeight: 110,
+          child: Container(
+            padding: const EdgeInsets.symmetric(horizontal: 12),
+            decoration: BoxDecoration(
+              color: Color(0xfff8e1bb),
+              borderRadius: BorderRadius.circular(20),
+              boxShadow: [
+                BoxShadow(
+                  color: Color(0xfff5ac46).withOpacity(0.7),
+                  blurRadius: 8,
+                  spreadRadius: 1,
+                  offset: Offset(0, 4),
+                ),
+              ],
+            ),
+            child: Row(
+              mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+              children: List.generate(5, (i) => Icon(
+                Icons.star,
+                size: 36,
+                color: i < _foundCorrect
+                    ? const Color(0xfff5ac46)
+                    : Colors.grey[400],
+              )),
+            ),
+          ),
+        ),
+
+        GameOverlay(
+          refX: 240,
+          refY: 340,
+          refWidth: 460,
+          refHeight: 110,
+          child: Text(
+            '$_foundCorrect/$_totalCorrect',
+            style: TextStyle(
+              color: _getScoreColor(_foundCorrect, _totalCorrect),
+              fontSize: 40,
+              fontFamily: 'ComicSans',
+              fontWeight: FontWeight.bold,
+            ),
+          ),
+        ),
         // ── Botão "Pronto" no canto inferior direito ────────────────────────
         GameOverlay(
           refX: 820,
